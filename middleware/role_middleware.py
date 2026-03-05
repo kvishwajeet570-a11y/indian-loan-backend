@@ -2,6 +2,9 @@ from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
 from flask import jsonify
 
 from database.db import get_db
+from database.db import get_db
+
+db = get_db()
 
 
 

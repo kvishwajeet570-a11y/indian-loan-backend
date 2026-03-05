@@ -3,6 +3,11 @@ from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
 
 from database.db import get_db
 from datetime import datetime
+from database.db import get_db
+
+db = get_db()
+
+device_collection = db["devices"]
 
 
 

@@ -1,5 +1,10 @@
 from database.db import get_db
 from datetime import datetime, timedelta
+from database.db import get_db
+
+db = get_db()
+
+otp_collection = db["otp"]
 
 
 

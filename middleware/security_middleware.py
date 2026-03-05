@@ -3,7 +3,9 @@ from flask import request, jsonify
 from database.security_log import save_security_log
 
 from database.db import get_db
+from database.db import get_db
 
+db = get_db()
 
 
 
