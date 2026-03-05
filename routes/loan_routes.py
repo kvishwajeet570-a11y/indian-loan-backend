@@ -11,13 +11,26 @@ loan_routes = Blueprint("loan_routes", __name__)
 @loan_routes.route("/apply-loan", methods=["POST"])
 def apply_loan_route():
 
-    # Elementor webhook + JSON दोनों handle
     data = request.get_json(silent=True)
 
     if not data:
         data = request.form.to_dict()
 
-    print("Incoming Loan Data:", data)
+    print("Incoming Raw Data:", data)
+
+    # Elementor Advanced Data structure fix
+    if "form_fields" in data:
+        fields = data["form_fields"]
+
+        data = {
+            "name": fields.get("name", {}).get("value"),
+            "email": fields.get("email", {}).get("value"),
+            "phone": fields.get("phone", {}).get("value"),
+            "amount": fields.get("loan_amount", {}).get("value"),
+            "type": fields.get("type", {}).get("value")
+        }
+
+    print("Processed Loan Data:", data)
 
     return jsonify(apply(data))
 
