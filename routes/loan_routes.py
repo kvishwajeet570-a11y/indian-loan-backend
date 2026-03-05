@@ -16,21 +16,28 @@ def apply_loan_route():
     if not data:
         data = request.form.to_dict()
 
-    print("Incoming Raw Data:", data)
+    print("RAW DATA:", data)
 
-    # Elementor Advanced Data structure fix
+    # Elementor form_fields structure handle
     if "form_fields" in data:
+
         fields = data["form_fields"]
 
+        name = fields.get("name", {}).get("value")
+        email = fields.get("email", {}).get("value")
+        phone = fields.get("phone", {}).get("value")
+        amount = fields.get("amount", {}).get("value")
+        loan_type = fields.get("type", {}).get("value")
+
         data = {
-            "name": fields.get("name", {}).get("value"),
-            "email": fields.get("email", {}).get("value"),
-            "phone": fields.get("phone", {}).get("value"),
-            "amount": fields.get("loan_amount", {}).get("value"),
-            "type": fields.get("type", {}).get("value")
+            "name": name,
+            "email": email,
+            "phone": phone,
+            "amount": amount,
+            "type": loan_type
         }
 
-    print("Processed Loan Data:", data)
+    print("FINAL DATA:", data)
 
     return jsonify(apply(data))
 
