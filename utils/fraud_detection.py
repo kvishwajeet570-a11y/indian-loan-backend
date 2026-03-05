@@ -6,18 +6,25 @@ db = get_db()
 fraud_collection = db["fraud_logs"]
 
 
-def log_fraud(email, reason):
+def check_fraud(email, ip=None):
+
+    fraud = fraud_collection.find_one(
+        {"email": email}
+    )
+
+    if fraud:
+        return True
+
+    return False
+
+
+def log_fraud(email, reason, ip=None):
+
     fraud_collection.insert_one({
         "email": email,
         "reason": reason,
+        "ip": ip,
         "date": datetime.utcnow()
     })
 
-
-def get_fraud_logs():
-    return list(
-        fraud_collection.find(
-            {},
-            {"_id": 0}
-        ).sort("date", -1)
-    )
+    return True
