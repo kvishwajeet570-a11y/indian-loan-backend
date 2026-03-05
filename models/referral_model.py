@@ -1,7 +1,11 @@
 from database.db import get_db
 from datetime import datetime
 import random
+from database.db import get_db
 
+db = get_db()
+
+referral_collection = db["referrals"]
 
 
 

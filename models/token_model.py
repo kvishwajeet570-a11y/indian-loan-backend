@@ -1,5 +1,10 @@
 from database.db import get_db
 from datetime import datetime
+from database.db import get_db
+
+db = get_db()
+
+token_collection = db["tokens"]
 
 
 
