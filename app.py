@@ -1,4 +1,3 @@
-cat > app.py << 'EOF'
 # ============================================
 # IMPORTS
 # ============================================
@@ -118,7 +117,6 @@ def create_app():
     from routes.security_routes import security_routes
     from routes.training_routes import training_routes
     from routes.commission_routes import commission_routes
-
     from routes.emi_routes import emi_bp
     from routes.payment_routes import payment_bp
     from routes.eligibility_routes import eligibility_bp
@@ -149,9 +147,6 @@ def create_app():
 
     @app.route("/")
     def home():
-
-        logging.info("Home accessed")
-
         return jsonify({
             "status": "success",
             "message": "🚀 Indian Loan Finance Backend Running"
@@ -204,4 +199,3 @@ if __name__ == "__main__":
         port=port,
         debug=False
     )
-EOF
