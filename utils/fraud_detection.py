@@ -1,30 +1,33 @@
 from database.db import get_db
 from datetime import datetime
 
+db = get_db()
+
+fraud_collection = db["fraud_logs"]
 
 
+def log_fraud(email, reason):
 
-def get_fraud_collection():
-    from database.db import get_db
-    db = get_db()
-    db = get_db()
-    return db["fraud_logs"]
+    fraud_collection.insert_one({
+        "email": email,
+        "reason": reason,
+        "date": datetime.utcnow()
+    })
 
 
+def get_fraud_logs():
 
-def check_fraud(email, amount):
+    return list(
+        fraud_collection.find(
+            {},
+            {"_id": 0}
+        ).sort("date", -1)
+    )
 
-    if amount > 50000:
 
-        fraud_collection.insert_one({
+def is_suspicious(amount):
 
-            "email": email,
-            "amount": amount,
-            "status": "fraud",
-            "date": datetime.utcnow()
-
-        })
-
+    if amount > 100000:
         return True
 
     return False
