@@ -1,20 +1,37 @@
-from utils.commission import add_commission_utils
+from database.db import get_db
+from datetime import datetime
+
+db = get_db()
+
+commission_collection = db["commissions"]
+
+COMMISSION_PERCENT = 5
 
 
-def commission_service(email, amount, source="recharge"):
+def calculate_commission(amount):
+    return (amount * COMMISSION_PERCENT) / 100
 
-    commission = add_commission_utils(
 
-        email,
-        amount,
-        source
+def add_commission_utils(email, amount, source="recharge"):
 
+    commission = calculate_commission(amount)
+
+    commission_collection.insert_one({
+        "email": email,
+        "amount": commission,
+        "source": source,
+        "percent": COMMISSION_PERCENT,
+        "date": datetime.utcnow()
+    })
+
+    return commission
+
+
+def get_commissions(email):
+
+    return list(
+        commission_collection.find(
+            {"email": email},
+            {"_id": 0}
+        ).sort("date", -1)
     )
-
-    return {
-
-        "status": True,
-
-        "commission": commission
-
-    }

@@ -1,4 +1,5 @@
 from database.db import get_db
+from datetime import datetime
 
 db = get_db()
 
@@ -11,10 +12,25 @@ def calculate_commission(amount):
     return (amount * COMMISSION_PERCENT) / 100
 
 
-def save_commission(email, amount):
+def add_commission_utils(email, amount):
+
     commission = calculate_commission(amount)
 
     commission_collection.insert_one({
         "email": email,
-        "amount": commission
+        "amount": commission,
+        "percent": COMMISSION_PERCENT,
+        "date": datetime.utcnow()
     })
+
+    return commission
+
+
+def get_commissions(email):
+
+    return list(
+        commission_collection.find(
+            {"email": email},
+            {"_id": 0}
+        ).sort("date", -1)
+    )
