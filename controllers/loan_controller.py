@@ -8,21 +8,28 @@ def apply(data):
     if not amount:
         return {"status": False, "message": "Loan amount required"}
 
+    try:
+        amount = int(amount)
+    except:
+        return {"status": False, "message": "Loan amount must be number"}
+
     if amount <= 0:
         return {"status": False, "message": "Invalid loan amount"}
 
     if amount > 500000:
         return {"status": False, "message": "Loan amount too large"}
 
+    data["amount"] = amount
+
     result = apply_loan(data)
 
     if result is None:
-        return {"status": False, "message": "You already have a pending loan"}
+        return {"status": False, "message": "You already have pending loan"}
 
     return {
         "status": True,
-        "message": "Loan application submitted",
-        "id": str(result.inserted_id)
+        "message": "Loan applied successfully",
+        "loan_id": str(result.inserted_id)
     }
 
 

@@ -9,6 +9,10 @@ def get_loan_collection():
     return db["loans"]
 
 
+# =============================
+# APPLY LOAN
+# =============================
+
 def apply_loan(data):
 
     loan_collection = get_loan_collection()
@@ -22,13 +26,13 @@ def apply_loan(data):
         return None
 
     loan = {
-        "email": data["email"],
-        "name": data["name"],
-        "phone": data["phone"],
-        "amount": data["amount"],
-        "type": data["type"],
+        "email": data.get("email"),
+        "name": data.get("name"),
+        "phone": data.get("phone"),
+        "amount": data.get("amount"),
+        "type": data.get("type"),
         "status": "pending",
-        "date": datetime.utcnow()
+        "created_at": datetime.utcnow()
     }
 
     result = loan_collection.insert_one(loan)
@@ -36,29 +40,47 @@ def apply_loan(data):
     return result
 
 
+# =============================
+# USER LOANS
+# =============================
+
 def get_user_loans(email):
 
     loan_collection = get_loan_collection()
 
-    return list(
-        loan_collection.find(
-            {"email": email},
-            {"_id": 0}
-        )
-    )
+    loans = loan_collection.find({"email": email})
 
+    result = []
+
+    for loan in loans:
+        loan["_id"] = str(loan["_id"])
+        result.append(loan)
+
+    return result
+
+
+# =============================
+# ALL LOANS
+# =============================
 
 def get_all_loans():
 
     loan_collection = get_loan_collection()
 
-    return list(
-        loan_collection.find(
-            {},
-            {"_id": 0}
-        )
-    )
+    loans = loan_collection.find()
 
+    result = []
+
+    for loan in loans:
+        loan["_id"] = str(loan["_id"])
+        result.append(loan)
+
+    return result
+
+
+# =============================
+# UPDATE STATUS
+# =============================
 
 def update_loan_status(loan_id, status):
 
