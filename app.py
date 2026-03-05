@@ -11,7 +11,6 @@ import os
 
 from config import Config
 from database.db import init_db
-
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
@@ -24,18 +23,10 @@ def create_app():
 
     app = Flask(__name__)
 
-    # ----------------------------------------
-    # CONFIG
-    # ----------------------------------------
-
     app.config["JWT_SECRET_KEY"] = Config.JWT_SECRET_KEY
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = Config.JWT_ACCESS_TOKEN_EXPIRES
 
-
-    # ----------------------------------------
-    # SWAGGER CONFIG
-    # ----------------------------------------
-
+    # Swagger
     swagger_config = {
         "headers": [],
         "specs": [
@@ -52,48 +43,28 @@ def create_app():
 
     Swagger(app, config=swagger_config)
 
-
-    # ----------------------------------------
-    # DATABASE
-    # ----------------------------------------
-
+    # MongoDB
     try:
         init_db()
         print("✅ MongoDB Connected")
     except Exception as e:
         print("❌ MongoDB connection failed:", e)
 
-
-    # ----------------------------------------
     # JWT
-    # ----------------------------------------
-
     JWTManager(app)
 
-
-    # ----------------------------------------
     # CORS
-    # ----------------------------------------
-
     CORS(app)
 
-
-    # ----------------------------------------
-    # RATE LIMIT
-    # ----------------------------------------
-
-    limiter = Limiter(
+    # Rate limit
+    Limiter(
         get_remote_address,
         app=app,
         default_limits=[f"{Config.MAX_REQUEST_PER_MINUTE} per minute"],
         storage_uri="memory://"
     )
 
-
-    # ----------------------------------------
-    # LOGGING
-    # ----------------------------------------
-
+    # Logging
     if not os.path.exists("logs"):
         os.makedirs("logs")
 
@@ -103,9 +74,8 @@ def create_app():
         format="%(asctime)s %(levelname)s %(message)s"
     )
 
-
     # ============================================
-    # IMPORT ROUTES
+    # ROUTES
     # ============================================
 
     from routes.auth_routes import auth_routes
@@ -121,11 +91,6 @@ def create_app():
     from routes.payment_routes import payment_bp
     from routes.eligibility_routes import eligibility_bp
 
-
-    # ============================================
-    # REGISTER ROUTES
-    # ============================================
-
     app.register_blueprint(auth_routes)
     app.register_blueprint(wallet_routes)
     app.register_blueprint(recharge_routes)
@@ -140,11 +105,7 @@ def create_app():
     app.register_blueprint(payment_bp, url_prefix="/loan")
     app.register_blueprint(eligibility_bp, url_prefix="/loan")
 
-
-    # ============================================
-    # HOME ROUTE
-    # ============================================
-
+    # Home
     @app.route("/")
     def home():
         return jsonify({
@@ -152,39 +113,15 @@ def create_app():
             "message": "🚀 Indian Loan Finance Backend Running"
         })
 
-
-    # ============================================
-    # HEALTH CHECK
-    # ============================================
-
+    # Health
     @app.route("/health")
     def health():
-        return jsonify({
-            "status": "ok"
-        })
-
-
-    # ============================================
-    # RATE LIMIT ERROR
-    # ============================================
-
-    @app.errorhandler(429)
-    def ratelimit_handler(e):
-        return jsonify({
-            "status": False,
-            "message": "Too many requests"
-        }), 429
-
+        return jsonify({"status": "ok"})
 
     return app
 
 
-# ============================================
-# CREATE APP INSTANCE
-# ============================================
-
 app = create_app()
-
 
 # ============================================
 # RUN SERVER
