@@ -8,9 +8,9 @@ fraud_collection = db["fraud_logs"]
 
 def check_fraud(email, ip=None):
 
-    fraud = fraud_collection.find_one(
-        {"email": email}
-    )
+    fraud = fraud_collection.find_one({
+        "email": email
+    })
 
     if fraud:
         return True
