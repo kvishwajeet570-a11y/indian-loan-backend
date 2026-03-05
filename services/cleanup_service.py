@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta
 from database.db import get_db
+from datetime import datetime, timedelta
 
 db = get_db()
 
@@ -8,23 +8,26 @@ token_collection = db["token_blacklist"]
 fraud_collection = db["fraud_logs"]
 
 
-def clean_expired_otp():
+def run_cleanup():
+
+    now = datetime.utcnow()
+
+    # OTP delete (10 minutes old)
     otp_collection.delete_many({
-        "expire": {"$lt": datetime.utcnow()}
+        "date": {"$lt": now - timedelta(minutes=10)}
     })
 
-
-def clean_old_tokens(days=7):
-    old_date = datetime.utcnow() - timedelta(days=days)
-
+    # Token delete (1 day old)
     token_collection.delete_many({
-        "date": {"$lt": old_date}
+        "date": {"$lt": now - timedelta(days=1)}
     })
 
-
-def clean_old_fraud_logs(days=30):
-    old_date = datetime.utcnow() - timedelta(days=days)
-
+    # Fraud logs delete (30 days old)
     fraud_collection.delete_many({
-        "date": {"$lt": old_date}
+        "date": {"$lt": now - timedelta(days=30)}
     })
+
+    return {
+        "status": True,
+        "message": "Cleanup completed"
+    }
