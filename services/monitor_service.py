@@ -3,21 +3,23 @@ from datetime import datetime
 
 db = get_db()
 
-monitor_collection = db["monitor_logs"]
 
+def full_monitor_service():
 
-def save_monitor_log(action, email):
-    monitor_collection.insert_one({
-        "action": action,
-        "email": email,
-        "date": datetime.utcnow()
-    })
+    users = db["users"].count_documents({})
+    loans = db["loans"].count_documents({})
+    transactions = db["transactions"].count_documents({})
+    fraud_logs = db["fraud_logs"].count_documents({})
+    blocked_users = db["blocked_users"].count_documents({})
 
-
-def get_monitor_logs():
-    return list(
-        monitor_collection.find(
-            {},
-            {"_id": 0}
-        ).sort("date", -1)
-    )
+    return {
+        "status": True,
+        "system": {
+            "users": users,
+            "loans": loans,
+            "transactions": transactions,
+            "fraud_logs": fraud_logs,
+            "blocked_users": blocked_users,
+            "time": datetime.utcnow()
+        }
+    }
