@@ -18,29 +18,18 @@ def apply_loan_route():
 
     print("RAW DATA:", data)
 
-    # Elementor data mapping
-    name = data.get("fields[name][value]")
-    email = data.get("fields[email][value]")
-    phone = data.get("fields[field_436f757][value]")
-    amount = data.get("fields[message][value]")
-    loan_type = data.get("fields[field_22e181c][value]")
-
-    new_data = {
-        "name": name,
-        "email": email,
-        "phone": phone,
-        "amount": amount,
-        "type": loan_type
+    # Elementor form mapping
+    mapped_data = {
+        "name": data.get("fields[name][value]"),
+        "email": data.get("fields[email][value]"),
+        "phone": data.get("fields[field_436f757][value]"),
+        "amount": data.get("fields[message][value]"),
+        "type": data.get("fields[field_22e181c][value]")
     }
 
-    print("FINAL DATA:", new_data)
+    print("MAPPED DATA:", mapped_data)
 
-    # MongoDB save
-    result = apply(new_data)
-
-    print("DB RESULT:", result)
-
-    return jsonify({"status": "success"})
+    return jsonify(apply(mapped_data))
 
 
 # ==============================
