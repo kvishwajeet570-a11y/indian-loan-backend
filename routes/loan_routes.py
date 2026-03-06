@@ -18,28 +18,24 @@ def apply_loan_route():
 
     print("RAW DATA:", data)
 
-    # Elementor form_fields structure handle
-    if "form_fields" in data:
+    # Elementor data convert
+    name = data.get("fields[name][value]")
+    email = data.get("fields[email][value]")
+    phone = data.get("fields[field_436f757][value]")
+    amount = data.get("fields[message][value]")
+    loan_type = data.get("fields[field_22e181c][value]")
 
-        fields = data["form_fields"]
+    new_data = {
+        "name": name,
+        "email": email,
+        "phone": phone,
+        "amount": amount,
+        "type": loan_type
+    }
 
-        name = fields.get("name", {}).get("value")
-        email = fields.get("email", {}).get("value")
-        phone = fields.get("phone", {}).get("value")
-        amount = fields.get("amount", {}).get("value")
-        loan_type = fields.get("type", {}).get("value")
+    print("FINAL DATA:", new_data)
 
-        data = {
-            "name": name,
-            "email": email,
-            "phone": phone,
-            "amount": amount,
-            "type": loan_type
-        }
-
-    print("FINAL DATA:", data)
-
-    return jsonify(apply(data))
+    return jsonify(apply(new_data))
 
 
 # ==============================
