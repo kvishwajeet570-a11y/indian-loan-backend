@@ -18,7 +18,7 @@ def apply_loan_route():
 
     print("RAW DATA:", data)
 
-    # Elementor data convert
+    # Elementor data mapping
     name = data.get("fields[name][value]")
     email = data.get("fields[email][value]")
     phone = data.get("fields[field_436f757][value]")
@@ -35,7 +35,12 @@ def apply_loan_route():
 
     print("FINAL DATA:", new_data)
 
-    return jsonify(apply(new_data))
+    # MongoDB save
+    result = apply(new_data)
+
+    print("DB RESULT:", result)
+
+    return jsonify({"status": "success"})
 
 
 # ==============================
